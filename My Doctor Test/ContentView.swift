@@ -17,29 +17,58 @@ struct ContentView: View {
     private var items: FetchedResults<Item>
 
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
+//        NavigationView {
+//            List {
+//                ForEach(items) { item in
+//                    NavigationLink {
+//                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
+//                    } label: {
+//                        Text(item.timestamp!, formatter: itemFormatter)
+//                    }
+//                }
+//                .onDelete(perform: deleteItems)
+//            }
+//            .toolbar {
+//                ToolbarItem(placement: .navigationBarTrailing) {
+//                    EditButton()
+//                }
+//                ToolbarItem {
+//                    Button(action: addItem) {
+//                        Label("Add Item", systemImage: "plus")
+//                    }
+//                }
+//            }
+//            Text("Select an item")
+//        }
+       
+        VStack {
+            Image(.myDoctorLogo)
+            HStack {
+                ZStack {
+                    VStack(alignment: .center, spacing: 4) {
+                        Text("Давление")
+                            .font(.title2)
+                            .bold()
+                        Text("\(Date().formatted())")
                     }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            // Действие для кнопки "+"
+                        }) {
+                            Image(systemName: "plus")
+                                .frame(width: 10, height: 10)
+                                .padding()
+                                .background(Color.orange)
+                                .cornerRadius(15)
+                            
+                        }
                     }
+                    .padding(.trailing)
                 }
             }
-            Text("Select an item")
         }
+        Spacer()
     }
 
     private func addItem() {
