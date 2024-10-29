@@ -16,7 +16,7 @@ struct ContentView: View {
         animation: .default)
     private var items: FetchedResults<Item>
     
-    @State private var selectedCase: Selection = Selection.day
+    @State private var selectedOption: Selection = Selection.day
         
     private enum Selection: String, CaseIterable {
         case day = "День"
@@ -94,9 +94,14 @@ struct ContentView: View {
                 }
                 
                 //            Сегментед пикер
-                Picker(selection: $selectedCase, label: Text("Picker")) {
+                Picker(selection: $selectedOption, label: Text("Picker")) {
                     ForEach(Selection.allCases, id: \.self)  { selection in
-                        Text(selection.rawValue).tag(selection)
+//                        Text(selection.rawValue).tag(selection)
+                        Button {
+                            selectedOption = selection
+                        } label: {
+                            Text(selection.rawValue)
+                        }
                     }
                 }
                 .pickerStyle(.segmented)
