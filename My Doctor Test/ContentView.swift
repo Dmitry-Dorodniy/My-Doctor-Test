@@ -15,6 +15,14 @@ struct ContentView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
         animation: .default)
     private var items: FetchedResults<Item>
+    
+    @State private var selectedCase: Selection = Selection.day
+        
+    private enum Selection: String, CaseIterable {
+        case day = "День"
+        case week = "Неделя"
+        case month = "Месяц"
+    }
 
     var body: some View {
 //        NavigationView {
@@ -40,36 +48,88 @@ struct ContentView: View {
 //            }
 //            Text("Select an item")
 //        }
-       
-        VStack {
-            Image(.myDoctorLogo)
-            HStack {
-                ZStack {
-                    VStack(alignment: .center, spacing: 4) {
-                        Text("Давление")
-                            .font(.title2)
-                            .bold()
-                        Text("\(Date().formatted())")
-                    }
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                            // Действие для кнопки "+"
-                        }) {
-                            Image(systemName: "plus")
-                                .frame(width: 10, height: 10)
-                                .padding()
-                                .background(Color.orange)
-                                .cornerRadius(15)
-                            
-                        }
-                    }
-                    .padding(.trailing)
+        ZStack {
+//            Бэкграунд
+            VStack {
+                HStack {
+                    Spacer()
+                    Image(.bg)
                 }
+                Spacer()
+                    .padding()
             }
-        }
-        Spacer()
+            .ignoresSafeArea()
+            
+//            Основные элементы
+            VStack {
+                //            Лого
+                Image(.myDoctorLogo)
+                //            Давление, дата, кнопка
+                HStack {
+                    ZStack {
+                        VStack(alignment: .center, spacing: 4) {
+                            Text("Давление")
+                                .font(.title2)
+                                .bold()
+                            Text("\(formattedDate())")
+                        }
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                // Действие для кнопки "+"
+                            }) {
+                                Image(systemName: "plus")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 25, height: 25)
+                                    .padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+                                    .background(Color.white)
+                                    .foregroundStyle(.gray)
+                                    .fontWeight(.light)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                            }
+                        }
+                        .padding(.trailing)
+                    }
+                }
+                
+                //            Сегментед пикер
+                Picker(selection: $selectedCase, label: Text("Picker")) {
+                    ForEach(Selection.allCases, id: \.self)  { selection in
+                        Text(selection.rawValue).tag(selection)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .background(Color(uiColor: UIColor.systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+                .padding(EdgeInsets(top: 10, leading: 15, bottom: 10, trailing: 15))
+                
+                
+                // основной график
+                ChartView()
+                    .background(Color(uiColor: UIColor.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .padding(.horizontal)
+                
+                //Заметки
+                NoteView()
+                    .background(Color(uiColor: UIColor.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .padding(EdgeInsets(top: 10, leading: 15, bottom: 10, trailing: 15))
+            }
+            
+                         }
     }
+    
+    /// Функция для форматирования текущей даты в формате месяц ГГГГ г.
+       private func formattedDate() -> String {
+           let dateFormatter = DateFormatter()
+           dateFormatter.dateFormat = "LLLL yyyy 'г.'"
+           dateFormatter.locale = Locale(identifier: "ru_RU")
+           
+           let date = Date() // Текущая дата
+           return dateFormatter.string(from: date)
+       }
 
     private func addItem() {
         withAnimation {
