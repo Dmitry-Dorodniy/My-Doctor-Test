@@ -8,21 +8,30 @@
 import SwiftUI
 
 struct AddPressureView: View {
+    @Environment(\.presentationMode) var mode: Binding<PresentationMode>
+    @Binding var pressure: String
+    
     var body: some View {
         ZStack {
             // фон
             VStack {
-                //
+                HStack {
+                    Spacer()
+                    Image(.bg)
+                }
+                .padding(.top, 80)
             }
+            .ignoresSafeArea()
             
             VStack(alignment: .leading) {
                 HStack {
                     Button {
-                        //
+                        mode.wrappedValue.dismiss()
                     } label: {
                         Image(systemName: "chevron.backward")
                             .foregroundStyle(.black)
                     }
+                    .navigationBarBackButtonHidden()
                     .frame(width: 30, height: 30)
                     .background(Color.white)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -53,7 +62,7 @@ struct AddPressureView: View {
                 .padding(.horizontal)
                 
                 HStack {
-                    TextField("120", text: .constant(""))
+                    TextField("120", text: $pressure)
                         .padding(.leading)
                         .frame(width: 103, height: 45)
                         .background(Color.white)
@@ -114,6 +123,7 @@ struct AddPressureView: View {
                 Spacer()
                 
                 Button {
+                    mode.wrappedValue.dismiss()
                     //
                 } label: {
                     Text("Сохранить")
@@ -125,10 +135,21 @@ struct AddPressureView: View {
                 .padding()
             }
         }
-        .background(Color.gray.opacity(0.2))
+        .onTapGesture {
+            self.endTextEditing()
+        }
     }
 }
 
 #Preview {
-    AddPressureView()
+    struct AddPressureViewExamplePreview: View {
+        @State var pressure: String = "120"
+        
+        var body: some View {
+            AddPressureView(pressure: $pressure)
+        }
+    }
+    
+    return AddPressureViewExamplePreview()
 }
+
