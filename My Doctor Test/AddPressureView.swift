@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AddPressure: View {
+struct AddPressureView: View {
     var body: some View {
         ZStack {
             // фон
@@ -130,5 +130,5 @@ struct AddPressure: View {
 }
 
 #Preview {
-    AddPressure()
+    AddPressureView()
 }
