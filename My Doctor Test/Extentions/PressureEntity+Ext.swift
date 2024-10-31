@@ -19,13 +19,13 @@ extension PressureEntity {
     }
     
     // Syntax Sugar
-    var diastPressure: String {
-        get { diastPressure_ ?? "120" }
+    var diastPressure: Int16 {
+        get { diastPressure_ }
         set { diastPressure_ = newValue }
     }
     
-    var systPressure: String {
-        get { systPressure_ ?? "80" }
+    var systPressure: Int16 {
+        get { systPressure_ }
         set { systPressure_ = newValue }
     }
 }

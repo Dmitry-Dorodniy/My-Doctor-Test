@@ -9,9 +9,7 @@ import SwiftUI
 import CoreData
 
 struct MainView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(fetchRequest: PressureEntity.fetch(), animation: .default)
-    
     private var pressures: FetchedResults<PressureEntity>
     
     @State private var selectedOption: Period = Period.month
@@ -83,8 +81,8 @@ fileprivate enum Period: String, CaseIterable {
     
     for i in 120..<125 {
         let newItem = PressureEntity(context: viewContext)
-        newItem.diastPressure = String(i)
-        newItem.systPressure = String(i - 40)
+        newItem.diastPressure = Int16(i)
+        newItem.systPressure = Int16(i - 40)
     }
     viewContext.saveContext()
     return MainView().environment(\.managedObjectContext, viewContext)

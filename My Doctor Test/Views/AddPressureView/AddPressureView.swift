@@ -10,7 +10,7 @@ import SwiftUI
 struct AddPressureView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
-    @State private var diastPressure: String = ""
+
     @State private var pressureData = PressureData()
     
     var body: some View {
@@ -64,6 +64,7 @@ struct AddPressureView: View {
                 .foregroundStyle(Color.gray)
                 .padding(.horizontal)
                 
+                //TODO: Нужны проверки, чтобы показатели давления вводились только в допустимых пределах
                 HStack {
                     TextField("120", text: $pressureData.systPressure)
                         .padding(.leading)
@@ -71,6 +72,9 @@ struct AddPressureView: View {
                         .background(Color.white)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .keyboardType(.numberPad)
+                        .onChange(of: pressureData.systPressure) {
+                            pressureData.systPressure = String(pressureData.systPressure.prefix(3))
+                            }
                     
                     TextField("80", text: $pressureData.diastPressure)
                         .padding(.leading)
@@ -79,6 +83,9 @@ struct AddPressureView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .padding(.leading, 8)
                         .keyboardType(.numberPad)
+                        .onChange(of: pressureData.diastPressure) {
+                            pressureData.diastPressure = String(pressureData.diastPressure.prefix(3))
+                            }
                     
                     TextField("60", text: .constant(""))
                         .padding(.leading)
@@ -135,7 +142,7 @@ struct AddPressureView: View {
                     Text("Сохранить")
                 }
                 .frame(maxWidth: .infinity, minHeight: 33)
-                .background(pressureData.diastPressure.isEmpty || pressureData.systPressure.isEmpty ? Color.blue.opacity(0.3) : Color.blue.opacity(0.8) )
+                .background(pressureData.diastPressure.isEmpty || pressureData.systPressure.isEmpty ? Color.blue.opacity(0.3) : Color.blue.opacity(0.8))
                 .foregroundStyle(Color.white)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
                 .padding()
@@ -149,9 +156,8 @@ struct AddPressureView: View {
 
 extension AddPressureView {
     private func saveAndBack() {
-        print(pressureData)
-        if !pressureData.diastPressure.isEmpty || !pressureData.systPressure.isEmpty {
-                addPressure()
+        if !pressureData.diastPressure.isEmpty && !pressureData.systPressure.isEmpty {
+            addPressure()
         }
         mode.wrappedValue.dismiss()
     }
@@ -159,9 +165,16 @@ extension AddPressureView {
     private func addPressure() {
         withAnimation {
             let newPressure = PressureEntity(context: viewContext)
-            newPressure.systPressure = pressureData.systPressure
-            newPressure.diastPressure = pressureData.diastPressure
+            if let newValue = Int16(pressureData.systPressure) {
+                newPressure.systPressure = newValue
+            } else {
+                return
+            }
             
+            if let newValue = Int16(pressureData.diastPressure) {
+                newPressure.diastPressure = newValue
+            }
+
             do {
                 try viewContext.save()
             } catch {

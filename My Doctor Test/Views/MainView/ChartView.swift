@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Charts
 
 struct ChartView: View {
     var pressures: FetchedResults<PressureEntity>
@@ -33,25 +34,25 @@ struct ChartView: View {
                 }
                 .padding(.top)
                 
-        //TODO:  Здесь должен быть график давлений, но выводится просто столбик значений для проверки CoreData
+        //TODO:  Здесь должен быть график давлений (можно использовать Charts, но выводится просто столбик значений для проверки CoreData
                 ZStack {
                     VStack {
                         ForEach(pressures, id: \.self) { pressure in
                             HStack {
-                                Text(pressure.diastPressure)
+                                Text(String(pressure.systPressure))
                                     .font(.footnote)
                                     .foregroundStyle(.red)
-                                Text(pressure.systPressure)
+                                Text(String(pressure.diastPressure))
                                     .font(.footnote)
                                     .foregroundStyle(.blue)
                             }
                         }
                     }
-                    Image(.graph)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.top)
+                                        Image(.graph)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(maxWidth: .infinity, alignment: .center)
+                                            .padding(.top)
                 }
                 
                 HStack() {
@@ -79,8 +80,8 @@ struct ChartView: View {
     
     for i in 120..<125 {
         let newItem = PressureEntity(context: viewContext)
-        newItem.diastPressure = String(i)
-        newItem.systPressure = String(i - 40)
+        newItem.diastPressure = Int16(i)
+        newItem.systPressure = Int16(i - 40)
     }
     viewContext.saveContext()
     return MainView().environment(\.managedObjectContext, viewContext)

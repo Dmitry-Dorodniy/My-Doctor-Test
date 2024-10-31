@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23231" systemVersion="24A348" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="PressureEntity" representedClassName="PressureEntity" syncable="YES" codeGenerationType="class">
-        <attribute name="diastPressure_" optional="YES" attributeType="String"/>
-        <attribute name="systPressure_" optional="YES" attributeType="String"/>
+        <attribute name="diastPressure_" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
+        <attribute name="systPressure_" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
     </entity>
 </model>
