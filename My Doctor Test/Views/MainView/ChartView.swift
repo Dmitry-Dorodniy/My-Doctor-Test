@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ChartView: View {
-    @Binding var pressure: String
+    var pressures: FetchedResults<PressureEntity>
     
     var body: some View {
         NavigationStack {
@@ -16,7 +16,7 @@ struct ChartView: View {
                 Text("Нет данных")
                     .font(.title)
                     .bold()
-                Text("Сегодня \(pressure)")
+                Text("Сегодня")
                     .padding(.top)
                 Rectangle().frame(height: 1)
                     .background(Color.secondary)
@@ -32,16 +32,32 @@ struct ChartView: View {
                     Text("Диастолическое")
                 }
                 .padding(.top)
-                Image(.graph)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top)
+                
+        //TODO:  Здесь должен быть график давлений, но выводится просто столбик значений для проверки CoreData
+                ZStack {
+                    VStack {
+                        ForEach(pressures, id: \.self) { pressure in
+                            HStack {
+                                Text(pressure.diastPressure)
+                                    .font(.footnote)
+                                    .foregroundStyle(.red)
+                                Text(pressure.systPressure)
+                                    .font(.footnote)
+                                    .foregroundStyle(.blue)
+                            }
+                        }
+                    }
+                    Image(.graph)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.top)
+                }
                 
                 HStack() {
                     Spacer()
                     NavigationLink {
-                        AddPressureView(pressure: $pressure)
+                        AddPressureView()
                     } label: {
                         Text("Добавить данные")
                             .foregroundStyle(.red)
@@ -59,12 +75,13 @@ struct ChartView: View {
 }
 
 #Preview {
-    struct ChartViewExamplePreview: View {
-        @State var pressure: String = "120"
-        
-        var body: some View {
-            ChartView(pressure: $pressure)
-        }
+    let viewContext = PersistenceController(inMemory:true).viewContext
+    
+    for i in 120..<125 {
+        let newItem = PressureEntity(context: viewContext)
+        newItem.diastPressure = String(i)
+        newItem.systPressure = String(i - 40)
     }
-    return ChartViewExamplePreview()
+    viewContext.saveContext()
+    return MainView().environment(\.managedObjectContext, viewContext)
 }

@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct AddPressureView: View {
+    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
-    @Binding var pressure: String
+    @State private var diastPressure: String = ""
+    @State private var pressureData = PressureData()
     
     var body: some View {
         ZStack {
-            // фон
+            // Background
             VStack {
                 HStack {
                     Spacer()
@@ -23,10 +25,11 @@ struct AddPressureView: View {
             }
             .ignoresSafeArea()
             
+            // TextFields
             VStack(alignment: .leading) {
                 HStack {
                     Button {
-                        mode.wrappedValue.dismiss()
+                        saveAndBack()
                     } label: {
                         Image(systemName: "chevron.backward")
                             .foregroundStyle(.black)
@@ -62,25 +65,28 @@ struct AddPressureView: View {
                 .padding(.horizontal)
                 
                 HStack {
-                    TextField("120", text: $pressure)
+                    TextField("120", text: $pressureData.systPressure)
                         .padding(.leading)
                         .frame(width: 103, height: 45)
                         .background(Color.white)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .keyboardType(.numberPad)
                     
-                    TextField("90", text: .constant(""))
+                    TextField("80", text: $pressureData.diastPressure)
                         .padding(.leading)
                         .frame(width: 103, height: 45)
                         .background(Color.white)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .padding(.leading, 8)
+                        .keyboardType(.numberPad)
                     
-                    TextField("90", text: .constant(""))
+                    TextField("60", text: .constant(""))
                         .padding(.leading)
                         .frame(width: 103, height: 45)
                         .background(Color.white)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .padding(.leading, 25)
+                        .keyboardType(.numberPad)
                 }
                 .padding(.horizontal)
                 
@@ -122,14 +128,14 @@ struct AddPressureView: View {
                 
                 Spacer()
                 
+                // Button
                 Button {
-                    mode.wrappedValue.dismiss()
-                    //
+                    saveAndBack()
                 } label: {
                     Text("Сохранить")
                 }
                 .frame(maxWidth: .infinity, minHeight: 33)
-                .background(Color.blue.opacity(0.3))
+                .background(pressureData.diastPressure.isEmpty || pressureData.systPressure.isEmpty ? Color.blue.opacity(0.3) : Color.blue.opacity(0.8) )
                 .foregroundStyle(Color.white)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
                 .padding()
@@ -141,15 +147,32 @@ struct AddPressureView: View {
     }
 }
 
-#Preview {
-    struct AddPressureViewExamplePreview: View {
-        @State var pressure: String = "120"
-        
-        var body: some View {
-            AddPressureView(pressure: $pressure)
+extension AddPressureView {
+    private func saveAndBack() {
+        print(pressureData)
+        if !pressureData.diastPressure.isEmpty || !pressureData.systPressure.isEmpty {
+                addPressure()
         }
+        mode.wrappedValue.dismiss()
     }
     
-    return AddPressureViewExamplePreview()
+    private func addPressure() {
+        withAnimation {
+            let newPressure = PressureEntity(context: viewContext)
+            newPressure.systPressure = pressureData.systPressure
+            newPressure.diastPressure = pressureData.diastPressure
+            
+            do {
+                try viewContext.save()
+            } catch {
+                let nsError = error as NSError
+                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            }
+        }
+    }
+}
+
+#Preview {
+    AddPressureView()
 }
 
