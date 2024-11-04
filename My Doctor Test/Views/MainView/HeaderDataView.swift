@@ -27,12 +27,12 @@ struct HeaderDataView: View {
                         Image(systemName: "plus")
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: 25, height: 25)
-                            .padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+                            .frame(width: 20, height: 20)
+                            .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
                             .background(Color.white)
-                            .foregroundStyle(.gray)
+                            .foregroundStyle(.black)
                             .fontWeight(.light)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .clipShape(RoundedRectangle(cornerRadius: 13))
                     }
                 }
                 .padding(.trailing)
