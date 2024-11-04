@@ -12,6 +12,7 @@ struct AddPressureView: View {
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
 
     @State private var pressureData = PressureData()
+    @State private var date = Date()
     
     var body: some View {
         ZStack {
@@ -23,6 +24,8 @@ struct AddPressureView: View {
                 }
                 .padding(.top, 80)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(uiColor: UIColor.systemGray6))
             .ignoresSafeArea()
             
             // TextFields
@@ -94,6 +97,9 @@ struct AddPressureView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .padding(.leading, 25)
                         .keyboardType(.numberPad)
+                        .onChange(of: pressureData.diastPressure) {
+                            pressureData.diastPressure = String(pressureData.diastPressure.prefix(3))
+                            }
                 }
                 .padding(.horizontal)
                 
@@ -107,17 +113,39 @@ struct AddPressureView: View {
                 .padding(.horizontal)
                 
                 HStack(alignment: .center, spacing: 25) {
-                    TextField(Date().formatted(date: .numeric, time: .omitted), text: .constant(""))
+                    Text(Date().formatted(date: .numeric, time: .omitted))
+                        .foregroundStyle(.placeholder)
+                        
                         .padding(.leading)
-                        .frame(width: 150, height: 45)
+                        .frame(width: 150, height: 45, alignment: .leading)
                         .background(Color.white)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .overlay {
+                            DatePicker("", selection: $date,  displayedComponents: [.date])
+                                .datePickerStyle(.compact)
+                                .labelsHidden()
+                                .colorMultiply(.clear)
+                                .compositingGroup()
+                                .scaleEffect(x: 1.3, y: 1)
+                                .clipped()
+                        }
                     
-                    TextField(Date().formatted(date: .omitted, time: .shortened), text: .constant(""))
+                    Text(Date().formatted(date: .omitted, time: .shortened))
+                        .foregroundStyle(.placeholder)
+                        
                         .padding(.leading)
-                        .frame(width: 103, height: 45)
+                        .frame(width: 150, height: 45, alignment: .leading)
                         .background(Color.white)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .overlay(alignment: .center) {
+                            DatePicker("", selection: $date,  displayedComponents: [.hourAndMinute])
+                                .datePickerStyle(.compact)
+                                .labelsHidden()
+                                .colorMultiply(.clear)
+                                .compositingGroup()
+                                .scaleEffect(x: 2, y: 1)
+                                .clipped()
+                        }
                         .padding(.leading, 8)
                 }
                 .padding(.horizontal)
@@ -137,6 +165,7 @@ struct AddPressureView: View {
                 
                 // Button
                 Button {
+                    guard !pressureData.diastPressure.isEmpty && !pressureData.systPressure.isEmpty else { return }
                     saveAndBack()
                 } label: {
                     Text("Сохранить")
