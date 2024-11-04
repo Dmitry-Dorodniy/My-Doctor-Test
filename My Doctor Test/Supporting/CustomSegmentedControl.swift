@@ -7,7 +7,15 @@
 
 import SwiftUI
 
-/// Custom segmented picker
+/**
+ Сustomizable segmented picker
+ 
+**Parameters:**
+    - pickerBackgroundColor: set picker backgroud color.
+    - cornerRadius: set cornerRadius for picker and indicator.
+    - borderColor: set border color for picker.
+    - borderWidth: set border width for picker.
+*/
 public struct CustomSegmentedControl<Data, Content> : View where Data: Hashable, Content: View {
     
     public let sources: [Data]
@@ -15,7 +23,6 @@ public struct CustomSegmentedControl<Data, Content> : View where Data: Hashable,
     private let itemBuilder: (Data) -> Content
     
     @State private var backgroundColor: Color = Color.black.opacity(0.05)
-    /// Set background color
     func pickerBackgroundColor(_ color: Color) -> CustomSegmentedControl {
         var view = self
         view._backgroundColor = State(initialValue: color)

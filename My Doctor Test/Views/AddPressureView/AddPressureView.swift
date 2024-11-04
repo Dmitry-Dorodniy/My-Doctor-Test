@@ -184,6 +184,9 @@ struct AddPressureView: View {
 }
 
 extension AddPressureView {
+    /**
+   Check if pressure textFields aren't empty, then save pressure data, else dismiss module
+    */
     private func saveAndBack() {
         if !pressureData.diastPressure.isEmpty && !pressureData.systPressure.isEmpty {
             addPressure()
@@ -191,6 +194,9 @@ extension AddPressureView {
         mode.wrappedValue.dismiss()
     }
     
+    /**
+   Add pressure data to CoreData context and try to save
+    */
     private func addPressure() {
         withAnimation {
             let newPressure = PressureEntity(context: viewContext)
